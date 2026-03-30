@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Vinted Batch</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --bg: #f5f0eb;
+  --card: #ffffff;
+  --card2: #faf7f4;
+  --border: #e8e0d8;
+  --border2: #d4c9bc;
+  --ink: #1a1612;
+  --ink2: #6b5e52;
+  --ink3: #a8998c;
+  --accent: #e84b1e;
+  --accent-bg: #fdf1ed;
+  --green: #1a7a4a;
+  --green-bg: #edf7f2;
+  --blue: #1a4a8a;
+  --blue-bg: #edf2fa;
+  --orange: #c45a00;
+  --orange-bg: #fdf3e8;
+  --r: 16px;
+  --r-sm: 10px;
+  --shadow: 0 2px 12px rgba(26,22,18,0.08);
+  --shadow-lg: 0 8px 32px rgba(26,22,18,0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Bricolage Grotesque', sans-serif;
+  min-height: 100vh;
+  font-size: 15px;
+}
+
+/* ─── SCREENS ─── */
+.screen { display: none; min-height: 100vh; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* ─── SCREEN 1: SETUP ─── */
+#screenSetup {
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg);
+  padding: 24px 20px;
+}
+
+.setup-inner {
+  width: 100%; max-width: 400px;
+}
+
+.brand-mark {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.brand-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px; height: 56px;
+  background: var(--ink);
+  border-radius: 16px;
+  font-size: 22px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-lg);
+}
+
+.brand-mark h1 {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+}
+
+.brand-mark p {
+  font-size: 13px;
+  color: var(--ink3);
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+.setup-card {
+  background: var(--card);
+  border-radius: var(--r);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+
+.setup-card label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--ink3);
+  margin-bottom: 8px;
+}
+
+.api-input-wrap { position: relative; }
+
+.api-input-wrap input {
+  width: 100%;
+  background: var(--card2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 13px 44px 13px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+  letter-spacing: 0.3px;
+}
+.api-input-wrap input:focus { border-color: var(--ink); }
+.api-input-wrap input::placeholder { color: var(--ink3); font-family: 'Bricolage Grotesque', sans-serif; letter-spacing: 0; }
+
+.toggle-vis {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  font-size: 16px; color: var(--ink3); line-height: 1;
+}
+
+.setup-hint {
+  font-size: 12px; color: var(--ink3); margin-top: 8px; line-height: 1.5;
+}
+.setup-hint a { color: var(--accent); text-decoration: none; font-weight: 500; }
+
+.btn-primary {
+  width: 100%;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-sm);
+  padding: 16px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: -0.2px;
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-primary:hover { background: #2d2720; }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ─── SCREEN 2: BATCH ─── */
+#screenBatch {
+  flex-direction: column;
+}
+
+/* TOP BAR */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(245,240,235,0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.topbar-logo {
+  width: 30px; height: 30px;
+  background: var(--ink); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; flex-shrink: 0;
+}
+
+.topbar h2 {
+  font-size: 15px; font-weight: 700;
+  flex: 1;
+}
+
+.articles-counter {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; font-weight: 500;
+  color: var(--ink3);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 10px;
+}
+
+/* CURRENT ARTICLE ZONE */
+.batch-body { flex: 1; padding: 16px; overflow-y: auto; }
+
+.article-zone {
+  background: var(--card);
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+
+.zone-head {
+  padding: 14px 16px;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.zone-head-left { display: flex; align-items: center; gap: 10px; }
+
+.article-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  color: rgba(255,255,255,0.5);
+}
+
+.sku-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; font-weight: 500;
+  color: #fff;
+  background: rgba(255,255,255,0.15);
+  padding: 3px 10px; border-radius: 20px;
+}
+
+.zone-photos { padding: 14px; }
+
+/* PHOTO GRID */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+  margin-bottom: 12px;
+}
+
+.photo-thumb {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  background: var(--card2);
+  border: 1px solid var(--border);
+}
+
+.photo-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+.photo-thumb.sku-photo {
+  border: 2px solid var(--accent);
+}
+
+.sku-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: var(--accent);
+  color: #fff;
+  font-size: 8px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  text-align: center; padding: 2px;
+  line-height: 1.2;
+}
+
+.photo-thumb .del-photo {
+  position: absolute; top: 3px; right: 3px;
+  width: 18px; height: 18px;
+  background: rgba(26,22,18,0.75);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: #fff;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+  border: none;
+}
+.photo-thumb:hover .del-photo,
+.photo-thumb:active .del-photo { opacity: 1; }
+
+/* ADD PHOTO BTN */
+.add-photo-btn {
+  width: 100%;
+  background: var(--card2);
+  border: 2px dashed var(--border2);
+  border-radius: var(--r-sm);
+  padding: 16px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  cursor: pointer;
+  font-size: 14px; font-weight: 600; color: var(--ink2);
+  transition: all 0.2s;
+  margin-bottom: 10px;
+}
+.add-photo-btn:hover, .add-photo-btn:active {
+  border-color: var(--ink);
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.zone-hint {
+  font-size: 11px; color: var(--ink3);
+  text-align: center; line-height: 1.5;
+  padding: 0 4px;
+}
+.zone-hint strong { color: var(--accent); }
+
+/* NEXT ARTICLE BUTTON */
+.btn-next {
+  width: 100%;
+  background: var(--card);
+  border: 2px solid var(--border2);
+  border-radius: var(--r-sm);
+  padding: 15px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 15px; font-weight: 700; color: var(--ink);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: all 0.2s;
+  margin-bottom: 10px;
+}
+.btn-next:hover { border-color: var(--ink); background: var(--card2); }
+.btn-next:active { transform: scale(0.98); }
+
+/* ARTICLES QUEUE */
+.queue-label {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--ink3);
+  margin-bottom: 8px;
+  padding: 0 2px;
+}
+
+.queue-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+
+.queue-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.queue-item .q-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--ink3);
+  flex-shrink: 0;
+}
+
+.queue-item .q-sku {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; font-weight: 500;
+  color: var(--accent);
+  background: var(--accent-bg);
+  padding: 2px 8px; border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.queue-item .q-count {
+  font-size: 12px; color: var(--ink2);
+  flex: 1;
+}
+
+.queue-item .q-del {
+  background: none; border: none; cursor: pointer;
+  font-size: 14px; color: var(--ink3);
+  padding: 4px; border-radius: 6px;
+  transition: color 0.15s;
+}
+.queue-item .q-del:hover { color: var(--accent); }
+
+/* GENERATE ALL BUTTON */
+.btn-generate-all {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-sm);
+  padding: 18px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 17px; font-weight: 800;
+  cursor: pointer;
+  letter-spacing: -0.3px;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  box-shadow: 0 4px 20px rgba(232,75,30,0.3);
+  margin-bottom: 20px;
+}
+.btn-generate-all:hover { background: #c73c10; box-shadow: 0 6px 28px rgba(232,75,30,0.4); }
+.btn-generate-all:active { transform: scale(0.98); }
+.btn-generate-all:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* ─── SCREEN 3: RESULTS ─── */
+#screenResults { background: var(--bg); }
+
+.results-topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(245,240,235,0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+
+.btn-back {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 13px; font-weight: 600; color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.btn-back:hover { background: var(--card2); }
+
+.results-topbar h2 { font-size: 15px; font-weight: 700; flex: 1; }
+
+.results-body { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+
+/* RESULT CARD */
+.result-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.result-card-head {
+  padding: 12px 16px;
+  background: var(--ink);
+  display: flex; align-items: center; gap: 10px;
+}
+
+.result-card-head .r-sku {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px; font-weight: 500; color: #fff;
+  background: rgba(255,255,255,0.15);
+  padding: 4px 10px; border-radius: 20px;
+}
+
+.result-card-head .r-photos {
+  font-size: 11px; color: rgba(255,255,255,0.45);
+  font-weight: 400;
+}
+
+.result-section { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.result-section:last-child { border-bottom: none; }
+
+.rs-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--ink3); margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.titre-text {
+  font-size: 16px; font-weight: 700;
+  line-height: 1.3; color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.char-bar {
+  height: 3px; background: var(--border); border-radius: 2px;
+  overflow: hidden; margin-bottom: 4px;
+}
+.char-bar-fill {
+  height: 100%; border-radius: 2px;
+  transition: width 0.5s ease;
+  background: var(--green);
+}
+.char-bar-fill.warn { background: var(--orange); }
+.char-bar-fill.over { background: var(--accent); }
+
+.char-info {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--ink3);
+}
+
+/* HASHTAGS */
+.htags-wrap { display: flex; flex-wrap: wrap; gap: 5px; }
+.htag {
+  font-size: 12px; padding: 4px 8px;
+  border-radius: 20px; font-weight: 500; cursor: pointer;
+  transition: opacity 0.15s;
+  line-height: 1.3;
+}
+.htag:active { opacity: 0.6; }
+.htag.fr { background: var(--green-bg); color: var(--green); }
+.htag.en { background: var(--blue-bg); color: var(--blue); }
+.htag.es { background: var(--orange-bg); color: var(--orange); }
+.htag.de { background: var(--accent-bg); color: var(--accent); }
+
+.lang-legend {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;
+}
+.ll-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--ink3); }
+.ll-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+.copy-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 12px; font-weight: 600; color: var(--ink2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.copy-btn:hover { border-color: var(--ink); color: var(--ink); }
+.copy-btn.done { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+
+/* LOADING */
+.loading-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(245,240,235,0.95);
+  backdrop-filter: blur(8px);
+  flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 20px;
+}
+.loading-overlay.active { display: flex; }
+
+.loading-spinner {
+  width: 48px; height: 48px;
+  border: 3px solid var(--border2);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-text {
+  font-size: 16px; font-weight: 600; color: var(--ink);
+  text-align: center;
+}
+
+.loading-sub {
+  font-size: 13px; color: var(--ink3);
+  text-align: center;
+}
+
+/* PROGRESS */
+.progress-bar-wrap {
+  width: 200px; height: 4px;
+  background: var(--border);
+  border-radius: 2px; overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%; background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: #fff;
+  font-size: 13px; font-weight: 600;
+  padding: 10px 18px; border-radius: 20px;
+  z-index: 300; opacity: 0; pointer-events: none;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; }
+
+/* ERROR */
+.error-msg {
+  background: var(--accent-bg);
+  border: 1px solid rgba(232,75,30,0.2);
+  border-radius: var(--r-sm);
+  padding: 12px 14px;
+  font-size: 13px; color: var(--accent);
+  margin: 8px 0;
+}
+
+#photoInput { display: none; }
+</style>
+</head>
+<body>
+
+<!-- ══ SCREEN 1: SETUP ══ -->
+<div class="screen active" id="screenSetup">
+  <div class="setup-inner">
+    <div class="brand-mark">
+      <div class="brand-logo">🏷️</div>
+      <h1>Vinted Batch</h1>
+      <p>Génère titres & hashtags en masse</p>
+    </div>
+
+    <div class="setup-card">
+      <label>Clé API Gemini</label>
+      <div class="api-input-wrap">
+        <input type="password" id="apiKeyInput" placeholder="AIzaSy…" autocomplete="off" oninput="checkSetup()">
+        <button class="toggle-vis" onclick="toggleApiVis()" id="visBtn">👁</button>
+      </div>
+      <p class="setup-hint">
+        Gratuit sur <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a> → Get API key → Create API key.<br>
+        Sauvegardée localement, jamais envoyée ailleurs.
+      </p>
+    </div>
+
+    <button class="btn-primary" id="startBtn" onclick="startBatch()" disabled>
+      Commencer →
+    </button>
+  </div>
+</div>
+
+<!-- ══ SCREEN 2: BATCH ══ -->
+<div class="screen" id="screenBatch">
+  <div class="topbar">
+    <div class="topbar-logo">🏷️</div>
+    <h2>Vinted Batch</h2>
+    <div class="articles-counter" id="articlesCounter">0 article</div>
+  </div>
+
+  <div class="batch-body">
+
+    <!-- CURRENT ARTICLE -->
+    <div class="article-zone">
+      <div class="zone-head">
+        <div class="zone-head-left">
+          <span class="article-num" id="currentArticleNum">Article 1</span>
+          <span class="sku-badge" id="currentSKU">SKU en attente…</span>
+        </div>
+      </div>
+      <div class="zone-photos">
+        <div class="photo-grid" id="currentPhotoGrid"></div>
+
+        <button class="add-photo-btn" onclick="document.getElementById('photoInput').click()">
+          <span>📷</span>
+          <span>Ajouter des photos</span>
+        </button>
+
+        <p class="zone-hint">
+          La <strong>dernière photo</strong> doit montrer le <strong>SKU écrit</strong> (ex: P109) — Gemini le lira automatiquement.
+        </p>
+      </div>
+    </div>
+
+    <!-- NEXT ARTICLE -->
+    <button class="btn-next" id="btnNext" onclick="nextArticle()" disabled>
+      Article suivant →
+    </button>
+
+    <!-- QUEUE -->
+    <div id="queueSection" style="display:none">
+      <p class="queue-label">Articles en attente</p>
+      <div class="queue-list" id="queueList"></div>
+    </div>
+
+    <!-- GENERATE ALL -->
+    <button class="btn-generate-all" id="btnGenerateAll" onclick="generateAll()" disabled>
+      ✦ Générer <span id="generateCount">0</span> article(s)
+    </button>
+
+  </div>
+</div>
+
+<!-- ══ SCREEN 3: RESULTS ══ -->
+<div class="screen" id="screenResults">
+  <div class="results-topbar">
+    <button class="btn-back" onclick="backToBatch()">← Retour</button>
+    <h2 id="resultsTitle">Résultats</h2>
+    <button class="copy-btn" onclick="copyAll()" id="copyAllBtn">📋 Tout</button>
+  </div>
+  <div class="results-body" id="resultsBody"></div>
+</div>
+
+<!-- ══ LOADING OVERLAY ══ -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loadingText">Analyse en cours…</div>
+  <div class="loading-sub" id="loadingSub">Gemini lit les photos</div>
+  <div class="progress-bar-wrap" id="progressWrap" style="display:none">
+    <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- HIDDEN FILE INPUT -->
+<input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhotos(this)">
+
+<script>
+// ─── STATE ───────────────────────────────────────────────
+let apiKey = '';
+let articles = [];          // [{photos:[{dataUrl,name}], sku:'P109'}, ...]
+let currentPhotos = [];     // photos pour l'article en cours
+let results = [];           // résultats générés
+
+// ─── INIT ────────────────────────────────────────────────
+(function init() {
+  const saved = localStorage.getItem('gemini_key');
+  if (saved) {
+    document.getElementById('apiKeyInput').value = saved;
+    apiKey = saved;
+    checkSetup();
+  }
+})();
+
+// ─── SETUP ───────────────────────────────────────────────
+function checkSetup() {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  document.getElementById('startBtn').disabled = val.length < 10;
+}
+
+function toggleApiVis() {
+  const inp = document.getElementById('apiKeyInput');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function startBatch() {
+  apiKey = document.getElementById('apiKeyInput').value.trim();
+  if (!apiKey) return;
+  localStorage.setItem('gemini_key', apiKey);
+  showScreen('screenBatch');
+  updateBatchUI();
+}
+
+// ─── SCREENS ─────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ─── PHOTOS ──────────────────────────────────────────────
+function handlePhotos(input) {
+  const files = Array.from(input.files);
+  const readers = files.map(file => new Promise(resolve => {
+    const r = new FileReader();
+    r.onload = e => resolve({ dataUrl: e.target.result, name: file.name });
+    r.readAsDataURL(file);
+  }));
+
+  Promise.all(readers).then(loaded => {
+    currentPhotos.push(...loaded);
+    renderCurrentPhotoGrid();
+    document.getElementById('btnNext').disabled = currentPhotos.length === 0;
+    updateGenerateAllBtn();
+  });
+  input.value = '';
+}
+
+function renderCurrentPhotoGrid() {
+  const grid = document.getElementById('currentPhotoGrid');
+  if (currentPhotos.length === 0) { grid.innerHTML = ''; return; }
+
+  grid.innerHTML = currentPhotos.map((p, i) => {
+    const isLast = i === currentPhotos.length - 1;
+    return `<div class="photo-thumb ${isLast ? 'sku-photo' : ''}">
+      <img src="${p.dataUrl}" alt="">
+      ${isLast ? '<span class="sku-label">SKU</span>' : ''}
+      <button class="del-photo" onclick="removeCurrentPhoto(${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function removeCurrentPhoto(idx) {
+  currentPhotos.splice(idx, 1);
+  renderCurrentPhotoGrid();
+  document.getElementById('btnNext').disabled = currentPhotos.length === 0;
+}
+
+// ─── NEXT ARTICLE ────────────────────────────────────────
+function nextArticle() {
+  if (currentPhotos.length === 0) return;
+
+  // Save current article
+  articles.push({ photos: [...currentPhotos], sku: '…' });
+  currentPhotos = [];
+
+  renderCurrentPhotoGrid();
+  document.getElementById('btnNext').disabled = true;
+
+  const idx = articles.length - 1;
+  document.getElementById('currentArticleNum').textContent = `Article ${articles.length + 1}`;
+  document.getElementById('currentSKU').textContent = 'SKU en attente…';
+
+  // Extract SKU from last photo immediately (fire & forget)
+  extractSKU(articles[idx], idx);
+
+  updateBatchUI();
+  showToast(`Article ${articles.length} ajouté ✓`);
+}
+
+async function extractSKU(article, idx) {
+  try {
+    const lastPhoto = article.photos[article.photos.length - 1];
+    const base64 = lastPhoto.dataUrl.split(',')[1];
+    const mime = lastPhoto.dataUrl.match(/^data:([^;]+);/)[1];
+
+    const body = {
+      contents: [{
+        parts: [
+          { inline_data: { mime_type: mime, data: base64 } },
+          { text: 'Lis le texte sur cette image. Il y a un code SKU écrit sur un papier ou une étiquette (exemple: P109, P23, J155, N7...). Réponds UNIQUEMENT avec le code SKU, rien d\'autre. Si tu ne vois pas de SKU, réponds "?".' }
+        ]
+      }]
+    };
+
+    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await resp.json();
+    const sku = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '?';
+    articles[idx].sku = sku;
+    updateQueueList();
+  } catch(e) {
+    articles[idx].sku = '?';
+    updateQueueList();
+  }
+}
+
+// ─── UI UPDATE ────────────────────────────────────────────
+function updateBatchUI() {
+  const total = articles.length + (currentPhotos.length > 0 ? 1 : 0);
+  document.getElementById('articlesCounter').textContent = `${articles.length} ajouté${articles.length > 1 ? 's' : ''}`;
+  document.getElementById('currentArticleNum').textContent = `Article ${articles.length + 1}`;
+
+  // Queue
+  const qSection = document.getElementById('queueSection');
+  qSection.style.display = articles.length > 0 ? 'block' : 'none';
+  updateQueueList();
+  updateGenerateAllBtn();
+}
+
+function updateQueueList() {
+  const list = document.getElementById('queueList');
+  list.innerHTML = articles.map((a, i) => `
+    <div class="queue-item">
+      <span class="q-num">#${i+1}</span>
+      <span class="q-sku">${a.sku || '…'}</span>
+      <span class="q-count">${a.photos.length} photo${a.photos.length > 1 ? 's' : ''}</span>
+      <button class="q-del" onclick="removeArticle(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function removeArticle(idx) {
+  articles.splice(idx, 1);
+  updateBatchUI();
+}
+
+function updateGenerateAllBtn() {
+  const total = articles.length + (currentPhotos.length > 0 ? 1 : 0);
+  const btn = document.getElementById('btnGenerateAll');
+  btn.disabled = total === 0;
+  document.getElementById('generateCount').textContent = total;
+}
+
+// ─── GENERATE ALL ────────────────────────────────────────
+async function generateAll() {
+  // Finalise l'article en cours si des photos sont présentes
+  if (currentPhotos.length > 0) {
+    articles.push({ photos: [...currentPhotos], sku: '…' });
+    currentPhotos = [];
+    const idx = articles.length - 1;
+    await extractSKU(articles[idx], idx);
+  }
+
+  if (articles.length === 0) return;
+
+  results = [];
+  showLoading(true, `Analyse article 1 / ${articles.length}`, 'Gemini lit les photos…');
+  document.getElementById('progressWrap').style.display = 'block';
+  setProgress(0);
+
+  for (let i = 0; i < articles.length; i++) {
+    const art = articles[i];
+    setLoading(`Analyse article ${i+1} / ${articles.length}`, `SKU: ${art.sku}`);
+    setProgress(Math.round((i / articles.length) * 100));
+
+    try {
+      const result = await analyzeArticle(art);
+      results.push({ sku: art.sku, photoCount: art.photos.length, ...result });
+    } catch(e) {
+      results.push({ sku: art.sku, photoCount: art.photos.length, error: e.message });
+    }
+
+    // Small delay between calls to avoid rate limiting
+    if (i < articles.length - 1) await sleep(600);
+  }
+
+  setProgress(100);
+  await sleep(400);
+  showLoading(false);
+  renderResults();
+  showScreen('screenResults');
+}
+
+async function analyzeArticle(art) {
+  const parts = [];
+
+  // Add all photos
+  art.photos.forEach((p, i) => {
+    const base64 = p.dataUrl.split(',')[1];
+    const mime = p.dataUrl.match(/^data:([^;]+);/)[1];
+    parts.push({ inline_data: { mime_type: mime, data: base64 } });
+  });
+
+  parts.push({ text: `Tu es un expert en revente de vêtements de marque sur Vinted France.
+
+Analyse ces ${art.photos.length} photos (la dernière montre le SKU écrit sur un papier).
+
+Génère une réponse JSON UNIQUEMENT (aucun texte avant/après, aucun backtick) :
+{
+  "titre": "...",
+  "hashtags": {
+    "fr": ["mot1", "mot2", ...12 mots...],
+    "en": ["word1", ...12 mots...],
+    "es": ["palabra1", ...8 mots...],
+    "de": ["Wort1", ...8 mots...]
+  }
+}
+
+Règles STRICTES :
+TITRE : maximum 100 caractères. Inclure : marque visible + type vêtement + couleur exacte + taille si visible + 1 détail mémorable (logo brodé, col en V, torsadé, vintage...). Ne pas inventer, uniquement ce qui est visible.
+
+HASHTAGS — exactement : 12 FR, 12 EN, 8 ES, 8 DE. Sans le # devant. Mélange : marque, type, couleur, style (vintage/y2k/preppy/oldmoney/streetwear selon le look), taille si visible, état, matière si devinable, termes de recherche populaires sur Vinted. Chaque hashtag = 1 mot ou expression collée (ex: ralphlauren, pulltommy, bleumarinr, oldmoney).` });
+
+  const body = { contents: [{ parts }] };
+
+  const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (!resp.ok) {
+    const err = await resp.json();
+    throw new Error(err.error?.message || `Erreur API ${resp.status}`);
+  }
+
+  const data = await resp.json();
+  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+  // Clean & parse JSON
+  const cleaned = raw.replace(/```json|```/g, '').trim();
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('Réponse Gemini invalide');
+
+  return JSON.parse(jsonMatch[0]);
+}
+
+// ─── RENDER RESULTS ──────────────────────────────────────
+function renderResults() {
+  document.getElementById('resultsTitle').textContent = `${results.length} résultat${results.length > 1 ? 's' : ''}`;
+
+  const body = document.getElementById('resultsBody');
+  body.innerHTML = results.map((r, i) => {
+    if (r.error) {
+      return `<div class="result-card">
+        <div class="result-card-head">
+          <span class="r-sku">${r.sku}</span>
+          <span class="r-photos">${r.photoCount} photos</span>
+        </div>
+        <div class="result-section">
+          <div class="error-msg">❌ Erreur : ${r.error}</div>
+        </div>
+      </div>`;
+    }
+
+    const titre = r.titre || '';
+    const chars = titre.length;
+    const pct = Math.min(100, (chars / 100) * 100);
+    const barClass = chars <= 80 ? '' : chars <= 100 ? 'warn' : 'over';
+
+    const frTags = (r.hashtags?.fr || []).map(h => `<span class="htag fr" onclick="copyTag('#${h}', this)">#${h}</span>`).join('');
+    const enTags = (r.hashtags?.en || []).map(h => `<span class="htag en" onclick="copyTag('#${h}', this)">#${h}</span>`).join('');
+    const esTags = (r.hashtags?.es || []).map(h => `<span class="htag es" onclick="copyTag('#${h}', this)">#${h}</span>`).join('');
+    const deTags = (r.hashtags?.de || []).map(h => `<span class="htag de" onclick="copyTag('#${h}', this)">#${h}</span>`).join('');
+
+    return `<div class="result-card" id="rcard-${i}">
+      <div class="result-card-head">
+        <span class="r-sku">${r.sku}</span>
+        <span class="r-photos">${r.photoCount} photo${r.photoCount > 1 ? 's' : ''}</span>
+      </div>
+
+      <!-- TITRE -->
+      <div class="result-section">
+        <div class="rs-label">
+          Titre Vinted
+          <button class="copy-btn" onclick="copyText('${titre.replace(/'/g,"\\'")}', this)">📋 Copier</button>
+        </div>
+        <div class="titre-text">${titre}</div>
+        <div class="char-bar"><div class="char-bar-fill ${barClass}" style="width:${pct}%"></div></div>
+        <div class="char-info">${chars}/100 caractères</div>
+      </div>
+
+      <!-- HASHTAGS -->
+      <div class="result-section">
+        <div class="rs-label">
+          40 Hashtags
+          <button class="copy-btn" onclick="copyAllTagsFor(${i}, this)">📋 Copier tout</button>
+        </div>
+        <div class="lang-legend">
+          <span class="ll-item"><span class="ll-dot" style="background:var(--green)"></span>🇫🇷 FR</span>
+          <span class="ll-item"><span class="ll-dot" style="background:var(--blue)"></span>🇬🇧 EN</span>
+          <span class="ll-item"><span class="ll-dot" style="background:var(--orange)"></span>🇪🇸 ES</span>
+          <span class="ll-item"><span class="ll-dot" style="background:var(--accent)"></span>🇩🇪 DE</span>
+        </div>
+        <div class="htags-wrap">${frTags}${enTags}${esTags}${deTags}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function copyAllTagsFor(idx, btn) {
+  const r = results[idx];
+  if (!r || !r.hashtags) return;
+  const all = [
+    ...(r.hashtags.fr||[]),
+    ...(r.hashtags.en||[]),
+    ...(r.hashtags.es||[]),
+    ...(r.hashtags.de||[])
+  ].map(h => '#'+h).join(' ');
+  navigator.clipboard.writeText(all).then(() => {
+    btn.textContent = '✓ Copié';
+    btn.classList.add('done');
+    setTimeout(() => { btn.textContent = '📋 Copier tout'; btn.classList.remove('done'); }, 2000);
+  });
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copié';
+    btn.classList.add('done');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('done'); }, 2000);
+  });
+}
+
+function copyTag(tag, el) {
+  navigator.clipboard.writeText(tag).then(() => showToast(`${tag} copié`));
+}
+
+function copyAll() {
+  const lines = results.filter(r => !r.error).map(r => {
+    const tags = [
+      ...(r.hashtags?.fr||[]),
+      ...(r.hashtags?.en||[]),
+      ...(r.hashtags?.es||[]),
+      ...(r.hashtags?.de||[])
+    ].map(h => '#'+h).join(' ');
+    return `=== SKU: ${r.sku} ===\nTitre: ${r.titre}\nHashtags: ${tags}`;
+  }).join('\n\n');
+  navigator.clipboard.writeText(lines).then(() => showToast('Tout copié ✓'));
+}
+
+function backToBatch() {
+  articles = [];
+  currentPhotos = [];
+  results = [];
+  renderCurrentPhotoGrid();
+  document.getElementById('queueSection').style.display = 'none';
+  document.getElementById('btnNext').disabled = true;
+  document.getElementById('currentArticleNum').textContent = 'Article 1';
+  document.getElementById('currentSKU').textContent = 'SKU en attente…';
+  updateBatchUI();
+  showScreen('screenBatch');
+}
+
+// ─── HELPERS ─────────────────────────────────────────────
+function showLoading(show, text, sub) {
+  const ov = document.getElementById('loadingOverlay');
+  ov.classList.toggle('active', show);
+  if (text) document.getElementById('loadingText').textContent = text;
+  if (sub) document.getElementById('loadingSub').textContent = sub;
+}
+
+function setLoading(text, sub) {
+  document.getElementById('loadingText').textContent = text;
+  document.getElementById('loadingSub').textContent = sub;
+}
+
+function setProgress(pct) {
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+</body>
+</html>
